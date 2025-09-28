@@ -1,0 +1,131 @@
+/* Landing screen */
+.landing-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  text-align: center;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  overflow: hidden;
+}
+
+.landing-logo {
+  width: 120px;
+  max-width: 30%;
+  margin-bottom: 20px;
+}
+
+.landing-content h1,
+.landing-content p {
+  color: var(--text-color);
+}
+
+.get-started-btn {
+  margin-top: 20px;
+  padding: 15px 40px;
+  font-size: 18px;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: opacity var(--transition-speed);
+}
+.get-started-btn:hover {
+  opacity: 0.9;
+}
+
+/* Generic page layout */
+.page-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* no scroll */
+  width: 100vw;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  text-align: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* Video placeholder */
+.video-placeholder {
+  width: 300px;
+  height: 180px;
+  background: #999;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  border-radius: 12px;
+  font-size: 2rem;
+}
+
+/* Buttons */
+.option-btn {
+  width: 300px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: opacity var(--transition-speed);
+}
+.option-btn:hover {
+  opacity: 0.85;
+}
+
+/* Top-right "Ona AI" */
+.page-title {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+/* Top-left logo (for pages that use it) */
+.page-logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 80px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+  .landing-logo {
+    width: 90px;
+    max-width: 40%;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  .get-started-btn,
+  .option-btn {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .video-placeholder {
+    width: 100%;
+    height: 160px;
+  }
+}

@@ -1,0 +1,29 @@
+/* index.css */
+:root {
+  /* Colors */
+  --bg-color: #E3E0DB;
+  --text-color: #3A3E4A;
+  --button-bg: #3A3E4A;
+  --button-text: #EFEFF1;
+
+  /* Fonts */
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  /* Sizing */
+  --border-radius: 10px;
+  --transition-speed: 0.3s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html, #root {
+  height: 100%;
+  width: 100%;
+  font-family: var(--font-main);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
