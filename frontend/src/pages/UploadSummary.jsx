@@ -13,7 +13,9 @@ export default function UploadSummary() {
   const [avatarState, setAvatarState] = useState("idle");
   
   // const API_BASE = "http://127.0.0.1:8000";
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  // const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://ona-ai-2-production.up.railway.app";
+
   console.log('API BASE:', import.meta.env.VITE_API_BASE_URL);
 
   const navigate = useNavigate();
