@@ -7,17 +7,17 @@ import AvatarBox from "../components/AvatarBox";
 export default function UploadSummary() {
   const [file, setFile] = useState(null);
   const [summary, setSummary] = useState("");
+  const [audioSrc, setAudioSrc] = useState("");
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
   const [avatarState, setAvatarState] = useState("idle");
-
-  const sessionId = "default";
-  const API_BASE = "http://192.168.0.116:7000";
-
+  
+  const API_BASE = "http://127.0.0.1:8000";
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
+    setError("");
   };
 
   const handleUpload = async () => {
@@ -25,42 +25,62 @@ export default function UploadSummary() {
       setError("Please upload a document first.");
       return;
     }
+
+    const validTypes = ['application/pdf'];
+    if (!validTypes.includes(file.type)) {
+      setError("Please upload a PDF file only.");
+      return;
+    }
+
     setProcessing(true);
     setError("");
     setSummary("");
+    setAudioSrc("");
     setAvatarState("processing");
 
     try {
-      // 🔑 Clear session before summarizing a new document
-      fetch(`${API_BASE}/api/clear-session`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId }),
-      }).catch((err) => console.error("Clear session failed:", err));
-
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("session_id", sessionId);
 
-      // 🔑 Adjust endpoint name once confirmed by backend team
-      const res = await fetch(`${API_BASE}/api/summarize`, {
+      const res = await fetch(`${API_BASE}/summarize/`, {
         method: "POST",
         body: formData,
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || `HTTP error! status: ${res.status}`);
+      }
+
       const data = await res.json();
-      if (data.success) {
-        setSummary(data.summary);
+      console.log("Backend response:", data);
+
+      if (data.summary_text && data.audio_content) {
+        setSummary(data.summary_text);
+        setAudioSrc(data.audio_content);
         setAvatarState("speaking");
       } else {
-        setError(data.error || "Failed to summarize document");
+        console.error("Unexpected backend response:", data);
+        setError("Failed to get summary from backend");
         setAvatarState("idle");
       }
     } catch (err) {
-      setError("Network error: " + err.message);
+      console.error("Error during upload:", err);
+      setError("Error: " + err.message);
       setAvatarState("idle");
     } finally {
       setProcessing(false);
     }
+  };
+
+  const handleContinue = () => {
+    // Pass the summary data to the GeneratedWork page
+    navigate("/generated", { 
+      state: { 
+        summary: summary,
+        fileName: file?.name || "document"
+      } 
+    });
   };
 
   return (
@@ -69,6 +89,7 @@ export default function UploadSummary() {
         <img src={logo} alt="Ona AI Logo" />
         <h1>Ona AI</h1>
       </div>
+
       <h3 style={{ marginBottom: "10px" }}>Upload a document to summarize</h3>
 
       <AvatarBox state={avatarState} />
@@ -77,6 +98,15 @@ export default function UploadSummary() {
         <div className="card">
           <h4>Summary:</h4>
           <p>{summary}</p>
+          
+          {audioSrc && (
+            <div style={{ marginTop: "15px" }}>
+              <audio controls style={{ width: "100%" }}>
+                <source src={audioSrc} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          )}
         </div>
       )}
 
@@ -84,12 +114,14 @@ export default function UploadSummary() {
         type="file"
         className="option-btn"
         onChange={handleFileChange}
-        accept=".pdf,.doc,.docx,.txt"
+        accept=".pdf"
+        disabled={processing}
       />
+
       <button
         className="option-btn"
         onClick={handleUpload}
-        disabled={processing}
+        disabled={processing || !file}
       >
         {processing ? "Processing..." : "Summarize & Read"}
       </button>
@@ -97,13 +129,13 @@ export default function UploadSummary() {
       {summary && (
         <button
           className="option-btn"
-          onClick={() => navigate("/generated")}
+          onClick={handleContinue}
         >
           ➡️ Continue to Generated Work
         </button>
       )}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
     </div>
   );
 }
